@@ -41,10 +41,10 @@ namespace Jwttoken.Controllers
                 switch (role)
                 {
                     case "user":
-                        return RedirectPermanent("/UserView/UserView");
+                        return RedirectPermanent("/User/UserView");
 
                     case "admin":
-                        return RedirectPermanent("/AdminView/AdminView");
+                        return RedirectPermanent("/Admin/AdminView");
 
                     default:
                         TempData["AlertMessage"] = "Неправильный Пароль!";

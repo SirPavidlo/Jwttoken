@@ -2,9 +2,9 @@
 
 namespace Jwttoken.Controllers
 {
-    public class UserViewController : Controller
+    public class AdminController : Controller
     {
-        public IActionResult UserView()
+        public IActionResult AdminView()
         {
             return View();
         }
