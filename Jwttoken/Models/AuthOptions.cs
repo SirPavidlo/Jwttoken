@@ -10,10 +10,7 @@ namespace Jwttoken.Models
         const string KEY = "Encryption_key20";   // ключ для шифрации
         public static SymmetricSecurityKey GetSymmetricSecurityKey()
         {
-            return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(KEY));
+            return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(KEY));
         }
-
-
-
     }
 }

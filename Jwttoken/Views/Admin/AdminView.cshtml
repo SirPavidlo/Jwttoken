@@ -1,19 +1,35 @@
-﻿@model Index
+﻿@model List<User>
 @{
     ViewData["Title"] = "AdminPage";
 }
 
 <div>
-    <h1 class = "display-4"> Добро Пожаловать!  </h1>
+    <h1 class = "display-4"> Добро Пожаловать, @User.Identity.Name  </h1>
 
-    <form asp-action="input1.php">
-        <p>
-            <b>Ваша Роль: Администратор</b><br>
-            <b>Тут вы можете увидеть всех пользователей и их роли:</b><br>
-            @{/*добавь вывод пользователй и роли*/}
-
-        </p>
-
-    </form>
-
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                     <a>Логин</a>
+                 </th>
+            <th>
+                <a>Роль</a>
+            </th>
+            <th></th>
+             </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) 
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Login)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Role)
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
 </div>

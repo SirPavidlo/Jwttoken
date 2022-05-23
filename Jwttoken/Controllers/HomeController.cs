@@ -34,28 +34,28 @@ namespace Jwttoken.Controllers
         [HttpPost]
         public ActionResult Index(string login, string password)
         {
-            if(login == null || password == null) {TempData["AlertMessage"] = "Заполните все поля!"; return RedirectToAction("Registration"); }
-            else
+            string test = login;
+            var users = ConvertText((string)TempData["path"]);
+            foreach (var user in users)
             {
-                string role = CheckPassword(login, password);
-                switch (role)
+                if (login == user.Login && BCrypt.Net.BCrypt.EnhancedVerify(password, user.Password) == true)
                 {
-                    case "user":
-                        return RedirectPermanent("/User/UserView");
+                    var claims = new List<Claim> { new Claim(ClaimTypes.Name, login), new Claim(ClaimTypes.Role, user.Role) };
+                    // создаем JWT-токен
+                    var jwt = new JwtSecurityToken(
+                            issuer: AuthOptions.ISSUER,
+                            audience: AuthOptions.AUDIENCE,
+                            claims: claims,
+                            expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(10)),
+                            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 
-                    case "admin":
-                        return RedirectPermanent("/Admin/AdminView");
-
-                    default:
-                        TempData["AlertMessage"] = "Неправильный Пароль!";
-                        return RedirectToAction("Index");
-
-
+                    var jwtsecuritytoken = new JwtSecurityTokenHandler().WriteToken(jwt);
+                    Response.Cookies.Append("jwt", jwtsecuritytoken);
+                    if (user.Role == "admin") { return View("/Views/Admin/AdminView.cshtml", users); }
+                    else { return Redirect("/User/Users"); }
                 }
-
-
             }
-
+            TempData["AlertMessage"] = "Пользователя с таким логином не существует"; return null;
         }
 
         private string[] ReadFile(string path) //считывание из файла построчно в string-массив
@@ -70,7 +70,6 @@ namespace Jwttoken.Controllers
                 }
             }
             string[] text = new string[linescount];
-
             using (StreamReader fs = new StreamReader(path))
             {
                 for (int i = 0; ; i++)
@@ -80,7 +79,6 @@ namespace Jwttoken.Controllers
                     text[i] = line;
                 }
             }
-
             return text;
         }
 
@@ -94,37 +92,6 @@ namespace Jwttoken.Controllers
                 users.Add(new User { Login = line[0], Password = line[1], Role = line[2] });
             }
             return users;
-        }
-
-        private bool DublicateLogin(string login) //если хотя бьы один логин совпадает вернуть true
-        {
-            string path = (string)TempData["path"];
-            if (System.IO.File.Exists(path))
-            {
-                var users = ConvertText(path);
-                foreach (var user in users)
-                {
-                    if (user.Login == login) { return true; }
-                }
-                return false;
-            }
-            else return false;
-        }
-
-        private string CheckPassword(string login, string password)
-        {
-            var users = ConvertText((string)TempData["path"]);
-            foreach (var user in users)
-            {
-                //а где верифи пассворд?
-                
-                if (login == user.Login && BCrypt.Net.BCrypt.EnhancedVerify(password, user.Password) == true)
-                { 
-                        if (user.Role == "user") { return "user"; }
-                        else { return "admin"; }
-                }
-            }
-            TempData["AlertMessage"] = "Пользователя с таким логином не существует"; return null ;
         }
 
     }

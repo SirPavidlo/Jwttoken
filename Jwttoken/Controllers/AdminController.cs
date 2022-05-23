@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Jwttoken.Controllers
 {
+    [Authorize(Roles ="admin")]
     public class AdminController : Controller
     {
-        public IActionResult AdminView()
+        public IActionResult Admins()
         {
-            return View();
+            return View("AdminView");
         }
     }
 }

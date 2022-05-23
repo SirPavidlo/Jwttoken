@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Jwttoken.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
-        public IActionResult UserView()
+        public IActionResult Users()
         {
-            return View();
+            return View("UserView");
         }
     }
 }
