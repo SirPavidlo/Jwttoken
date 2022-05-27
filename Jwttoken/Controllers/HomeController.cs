@@ -27,7 +27,13 @@ namespace Jwttoken.Controllers
 
         public IActionResult Index()
         {
+            
             TempData["path"] = @"C:\ProgramData\users.txt";
+
+            if (User.Identity.IsAuthenticated)
+            {
+                return Redirect("/Home/AlreadyAuth");
+            }
             return View();
         }
 
@@ -94,5 +100,25 @@ namespace Jwttoken.Controllers
             return users;
         }
 
+        public IActionResult AlreadyAuth()
+        {
+            var users = ConvertText((string)TempData["path"]);
+            foreach (var user in users)
+            {
+                if (User.Identity.Name == user.Login)
+                {
+                    if (user.Role == "admin") { return View("/Views/Admin/AdminView.cshtml", users); }
+                    else { return Redirect("/User/Users"); }
+                }
+
+            }
+            return Redirect("/Home/Index");
+        }
+
+        public IActionResult CookieClear()
+        {
+            Response.Cookies.Delete("jwt");
+            return Redirect("/Home/Index");
+        }
     }
 }

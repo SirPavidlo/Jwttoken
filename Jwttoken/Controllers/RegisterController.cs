@@ -99,6 +99,5 @@ namespace Jwttoken.Controllers
             }
             return users;
         }
-
     }
 }
